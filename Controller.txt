@@ -1,0 +1,81 @@
+@RestController
+@RequestMapping("/orders")
+public class OrderController {
+
+    private final OrderService orderService;
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
+
+    @GetMapping
+    public List<Order> getOrders(
+            @RequestParam String status,
+            @RequestParam(required = false, defaultValue = "id") String sortBy,
+            @RequestParam(required = false, defaultValue = "ASC") String direction) {
+
+        return orderService.getOrders(status, sortBy, direction);
+    }
+}
+@Service
+public class OrderService {
+
+    private final OrderRepository orderRepository;
+
+    public OrderService(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+
+    public List<Order> getOrders(String status,
+                                 String sortBy,
+                                 String direction) {
+
+        // Strict allowlist for ORDER BY column
+        Set<String> allowedSortFields =
+                Set.of("id", "amount", "created_at");
+
+        if (!allowedSortFields.contains(sortBy)) {
+            sortBy = "id";
+        }
+
+        // Strict allowlist for sorting direction
+        if (!"ASC".equalsIgnoreCase(direction) &&
+            !"DESC".equalsIgnoreCase(direction)) {
+            direction = "ASC";
+        }
+
+        return orderRepository.findOrders(status, sortBy, direction);
+    }
+}
+@Repository
+public class OrderRepository {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    public OrderRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public List<Order> findOrders(String status,
+                                  String sortBy,
+                                  String direction) {
+
+        String sql =
+            "SELECT id, user_id, amount, status, created_at " +
+            "FROM orders " +
+            "WHERE status = ? " +
+            "ORDER BY " + sortBy + " " + direction;
+
+        return jdbcTemplate.query(sql, new Object[]{status}, (rs, rowNum) -> {
+
+            Order order = new Order();
+            order.setId(rs.getLong("id"));
+            order.setUserId(rs.getLong("user_id"));
+            order.setAmount(rs.getBigDecimal("amount"));
+            order.setStatus(rs.getString("status"));
+            order.setCreatedAt(rs.getTimestamp("created_at"));
+
+            return order;
+        });
+    }
+}

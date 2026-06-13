@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    
+    <header class="about-header">
+        <div class="container">
+            <h1>About Our Company</h1>
+            <p>We are a dedicated team innovating new solutions for digital growth.</p>
+        </div>
+    </header>
+
+   
+    <main class="container">
+        <section class="about-story">
+            <div class="story-text">
+                <h2>Our Story</h2>
+                <p>Founded with a vision to streamline digital processes, our agency has grown into a cross-functional team of engineers, designers, and strategists. We focus on building tools that deliver lasting value to users worldwide.</p>
+                <p>We combine deep industry knowledge with modern development approaches to tackle complex workflows and design problems effectively.</p>
+            </div>
+            <div class="story-image">
+                <!-- Replace with your own image URL -->
+                <img src="https://placeholder.com" alt="Our Team Collaborating">
+            </div>
+        </section>
+
+
+    </main>
+
+    <!-- Simple Footer -->
+    <footer>
+        <p>&copy; 2026 Your Company Name. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
+
+
+
+@RestController
+public class AppController {
+
+    @GetMapping("/fetch")
+    public String fetch(@RequestParam String url) throws IOException {
+
+        return new String(new URL(url).openStream().readAllBytes());
+    }
+
+    @GetMapping("/profile/{id}")
+    public String getProfile(@PathVariable String id,
+                              HttpSession session) {
+
+        User user = (User) session.getAttribute("user");
+
+        return "Profile data: " + userService.getUserById(id);
+    }
+}

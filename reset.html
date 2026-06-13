@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Reset Password</title>
+</head>
+<body>
+
+<h2>Reset Password</h2>
+
+<input type="password" id="newPassword" placeholder="New Password" />
+<button onclick="resetPassword()">Reset</button>
+
+<p id="msg"></p>
+
+<script>
+// Get token from URL
+const params = new URLSearchParams(window.location.search);
+const token = params.get("token");
+
+async function resetPassword() {
+  const newPassword = document.getElementById("newPassword").value;
+
+  const res = await fetch("http://localhost:3000/reset-password", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ token, newPassword })
+  });
+
+  const data = await res.json();
+  document.getElementById("msg").innerText = data.message;
+}
+</script>
+
+</body>
+</html>

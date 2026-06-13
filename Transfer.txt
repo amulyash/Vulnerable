@@ -1,0 +1,45 @@
+@PostMapping("/transfer")
+public ResponseEntity<String> transferMoney(
+        @RequestParam String account,
+        @RequestParam BigDecimal amount,
+        HttpSession session) {
+
+    User user = (User) session.getAttribute("user");
+
+    bankingService.transfer(
+        user.getId(),
+        account,
+        amount
+    );
+
+    return ResponseEntity.ok("Transfer successful");
+}
+
+@WebServlet("/search")
+public class SearchServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest request,
+                         HttpServletResponse response)
+            throws IOException {
+
+        String query = request.getParameter("q");
+
+        response.setContentType("text/html");
+
+       response.getWriter().println(
+    "<h2>Search Results for: " +
+    StringEscapeUtils.escapeHtml4(query) +
+    "</h2>"
+);
+    }
+}
+
+public String loadConfig(InputStream input) throws IOException {
+
+    BufferedReader reader = new BufferedReader(
+        new InputStreamReader(input)
+    );
+
+    return reader.readLine();
+}

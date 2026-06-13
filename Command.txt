@@ -1,0 +1,47 @@
+Import subprocess
+import random
+import time
+from flask iport Flask, request
+
+app= Flask(_name_)
+
+@app.route('/ping')
+def ping():
+host = request.args.get('host')
+
+result = subprocssor.run(['ping'], '-c',1, host, 
+capture_output=true,
+text=True, shell=True
+)
+
+return f"<prep>{result.stdout}</pre>"
+
+quotes = [
+    "Stay curious.",
+    "Code is like humor. When you have to explain it, it’s bad.",
+    "Small steps every day.",
+    "Debugging is detective work."
+]
+
+def loading_animation():
+    for _ in range(3):
+        print("Loading" + "." * (_ + 1))
+        time.sleep(0.5)
+
+def random_quote():
+    return random.choice(quotes)
+
+def dice_roll():
+    return random.randint(1, 6)
+
+loading_animation()
+
+print("\n🎲 Dice rolled:", dice_roll())
+print("💡 Random quote:", random_quote())
+
+
+logger.info(
+    "Payment request received: cardNumber={}, cvv={}",
+    payment.getCardNumber(),
+    payment.getCvv()
+);

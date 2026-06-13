@@ -1,0 +1,58 @@
+class Main {
+  public static void main(String[] args) {
+
+    int n = 5;
+    // for loop  
+    for (int i = 1; i <= n; ++i) {
+      System.out.println("Java is fun");
+    }
+  }
+}
+
+@PostMapping("/comment")
+public void addComment(HttpServletRequest request) {
+
+    String comment = request.getParameter("comment");
+
+    comment = comment.replaceAll("(?i)<script.*?>.*?</script>", "");
+
+    commentRepository.save(comment);
+}
+
+
+@GetMapping("/post/{id}")
+public String viewPost(Model model) {
+
+    List<String> comments = commentRepository.findByPostId(id);
+
+    model.addAttribute("comments", comments);
+
+    return "post";
+}
+
+<div th:each="comment : ${comments}">
+    <span th:utext="${comment}"></span>
+</div>
+
+<div class="cards-grid-container">
+  
+  <article class="it-card-container">
+        <a href="#" class="it-card-link" aria-label="Read more about Majestic Morning Vista">
+            <!-- Image by Scott Webb on Unsplash -->
+            <!-- Replace image with your own -->
+            <img 
+                class="it-card-image" 
+                src="https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?ixlib=rb-4.0.3&amp;ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&amp;auto=format&amp;fit=crop&amp;w=600&amp;q=80" 
+                alt="Misty morning over a mountain lake surrounded by a forest.">
+            <div class="it-card-content">
+                <h3 class="it-card-title">Majestic Morning Vista</h3>
+                <p class="it-card-description">Discover breathtaking landscapes where tranquil waters meet towering peaks. This card showcases content with a supporting visual.</p>
+                <div role="button" class="it-card-action">Read More</div>
+            </div>
+
+
+
+
+
+
+

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>User Form</title>
+</head>
+<body>
+
+<h2>Enter User Details</h2>
+
+<form id="userForm">
+  <input type="text" id="name" placeholder="Name" required /><br><br>
+  <input type="text" id="phone" placeholder="Phone Number" required /><br><br>
+  <input type="email" id="email" placeholder="Email Address" required /><br><br>
+  <input type="text" id="empId" placeholder="Employee ID" required /><br><br>
+  <input type="text" id="altNumber" placeholder="Alternate Number" /><br><br>
+
+  <button type="submit">Submit</button>
+</form>
+
+<p id="msg"></p>
+
+<script>
+document.getElementById("userForm").addEventListener("submit", async function(e) {
+  e.preventDefault();
+
+  const data = {
+    name: document.getElementById("name").value,
+    phone: document.getElementById("phone").value,
+    email: document.getElementById("email").value,
+    empId: document.getElementById("empId").value,
+    altNumber: document.getElementById("altNumber").value
+  };
+
+  const res = await fetch("http://localhost:3000/add-user", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+  });
+
+  const result = await res.json();
+  document.getElementById("msg").innerText = result.message;
+});
+</script>
+
+</body>
+</html>
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+
+mongoose.connect("mongodb://127.0.0.1:27017/userdb", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => console.log("MongoDB connected"))
+  .catch(err => console.log(err));
+
+
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  phone: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  empId: { type: String, required: true },
+  altNumber: { type: String }
+});
+
+const User = mongoose.model("User", userSchema);
+
+
+app.post("/add-user", async (req, res) => {
+  try {
+    const { name, phone, email, empId, altNumber } = req.body;
+
+    if (!name || !phone || !email || !empId) {
+      return res.status(400).json({ message: "Required fields missing" });
+    }
+
+    const newUser = new User({
+      name,
+      phone,
+      email,
+      empId,
+      altNumber
+    });
+
+    await newUser.save();
+
+    res.json({ message: "User saved successfully" });
+  } catch (err) {
+    res.status(500).json({ message: "Error saving user", error: err.message });
+  }
+});
+
+app.listen(3000, () => {
+  console.log("Server running on http://localhost:3000");
+});
